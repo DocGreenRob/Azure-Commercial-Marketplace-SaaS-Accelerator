@@ -371,7 +371,7 @@ Write-host "      ➡️ Create KeyVault Role Assignment"
 # Get the signed in user object id
 $userObjID = az ad signed-in-user show --query id -o tsv
 # Create the role assignment for the current signed in user to the new Key Vault
-az role assignment create --assignee $userObjID --role "Key Vault Administrator" --scope "/subscriptions/subId/resourceGroups/rgName/providers/Microsoft.KeyVault/vaults/$KeyVault"
+az role assignment create --assignee $userObjID --role "Key Vault Administrator" --scope "/subscriptions/$AzureSubscriptionID/resourceGroups/$ResourceGroupForDeployment/providers/Microsoft.KeyVault/vaults/$KeyVault"
 
 Write-host "   🔵 App Service Plan"
 Write-host "      ➡️ Create App Service Plan"
