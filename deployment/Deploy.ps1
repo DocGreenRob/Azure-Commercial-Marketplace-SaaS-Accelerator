@@ -355,6 +355,8 @@ if ($env:ACC_CLOUD -eq $null){
 Write-host "      ➡️ Create SQL DB"
 az sql db create --resource-group $ResourceGroupForDeployment --server $SQLServerName --name $SQLDatabaseName  --edition Standard  --capacity 10 --zone-redundant false --output $azCliOutput
 
+
+
 Write-host "   🔵 KeyVault"
 Write-host "      ➡️ Create KeyVault"
 az keyvault create --name $KeyVault --resource-group $ResourceGroupForDeployment --output $azCliOutput
@@ -364,6 +366,12 @@ az keyvault secret set --vault-name $KeyVault --name DefaultConnection --value $
 Write-host "      ➡️ Update Firewall"
 az keyvault update --name $KeyVault --resource-group $ResourceGroupForDeployment --default-action Deny --output $azCliOutput
 az keyvault network-rule add --name $KeyVault --resource-group $ResourceGroupForDeployment --vnet-name $VnetName --subnet $WebSubnetName --output $azCliOutput
+
+Write-host "      ➡️ Create KeyVault Role Assignment"
+# Get the signed in user object id
+$userObjID = az ad signed-in-user show --query id -o tsv
+# Create the role assignment for the current signed in user to the new Key Vault
+az role assignment create --assignee $userObjID --role "Key Vault Administrator" --scope "/subscriptions/subId/resourceGroups/rgName/providers/Microsoft.KeyVault/vaults/$KeyVault"
 
 Write-host "   🔵 App Service Plan"
 Write-host "      ➡️ Create App Service Plan"
